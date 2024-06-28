@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD de Usuários (CNPJ)</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Gerenciar Usuários (CNPJ)</h2>
+
+    <!-- Formulário para adicionar ou editar usuário -->
+    <?php
+    if (isset($_GET['edit'])) {
+        $id = $_GET['edit'];
+        include 'editar.php'; // Inclui o formulário de edição
+    } else {
+        include 'adicionar.php'; // Inclui o formulário de adição
+    }
+    ?>
+
+    <hr>
+
+    <!-- Listagem dos usuários -->
+    <h3>Usuários Cadastrados</h3>
+    <?php
+    // Inclui o controlador e a lógica de paginação
+    include_once 'UsuarioController.php';
+
+    $controller = new UsuarioController();
+    $paginaAtual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
+    $porPagina = 5;
+
+    $usuarios = $controller->listarUsuarios($paginaAtual, $porPagina);
+
+    include 'listagem.php'; // Inclui a listagem de usuários
+    ?>
+
+    <!-- Paginação -->
+    <?php
+    $totalUsuarios = $controller->getTotalUsuarios();
+    $totalPaginas = ceil($totalUsuarios / $porPagina);
+
+    if ($totalPaginas > 1) {
+        echo '<br><br>Páginas:';
+        for ($i = 1; $i <= $totalPaginas; $i++) {
+            if ($i == $paginaAtual) {
+                echo " [$i] ";
+            } else {
+                echo ' <a href="index.php?pagina=' . $i . '">' . $i . '</a> ';
+            }
+        }
+    }
+    ?>
+</body>
+</html>
